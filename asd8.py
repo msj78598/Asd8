@@ -59,14 +59,16 @@ st.markdown("<h4 style='text-align: center; color: #FF5733;'>نظام مراقب
 # تحميل نموذج YOLOv5
 # تحميل نموذج YOLOv5
 if "model" not in st.session_state:
-    # المسار المخصص الذي يحتوي على ملف النموذج
-    model_path = r'best (13).pt'  # تأكد من استخدام المسار الكامل مع علامات r
+    # تحديث المسار للإشارة إلى ملف النموذج a.pt
+    model_path = r'a.pt'  # أو استخدم المسار الكامل إذا كان النموذج في مسار مختلف
 
     if os.path.exists(model_path):
         st.write("✅ تم العثور على ملف النموذج!")
-        st.session_state.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
+        # تحميل النموذج باستخدام torch.hub
+        st.session_state.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True)
     else:
         st.error("❌ لم يتم العثور على ملف النموذج!")
+
 
 
 
