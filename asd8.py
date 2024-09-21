@@ -1,7 +1,5 @@
 import streamlit as st
-import json
 import os
-import hashlib
 import torch
 import cv2
 from PIL import Image
@@ -11,6 +9,10 @@ import time  # لإضافة تأخير للوميض
 
 # تنسيق الصفحة
 st.set_page_config(page_title="Fire Detection Monitoring", page_icon="🔥", layout="wide")
+
+# التأكد من وجود مجلد للصور
+if not os.path.exists("images"):
+    os.makedirs("images")
 
 # شريط جانبي للإعدادات
 st.sidebar.title("⚙️ الإعدادات")
@@ -32,7 +34,7 @@ if st.sidebar.button("استخراج التقرير"):
 
         if filtered_detections:
             df = pd.DataFrame(filtered_detections)
-            image_folder = "C:/asd8/"
+            image_folder = "images/"
             df['image_link'] = df['image'].apply(lambda x: f'=HYPERLINK("{image_folder}{x}", "عرض الصورة")')
 
             excel_file = "fire_detections_report.xlsx"
@@ -56,7 +58,11 @@ st.markdown("<h4 style='text-align: center; color: #FF5733;'>نظام مراقب
 
 # تحميل نموذج YOLOv5
 if "model" not in st.session_state:
-    st.session_state.model = torch.hub.load('ultralytics/yolov5', 'custom', path='C:/asd8/yolov5/runs/train/exp/weights/best.pt')
+    model_path = os.path.join('yolov5', 'runs', 'train', 'exp', 'weights', 'best.pt')
+    if os.path.exists(model_path):
+        st.session_state.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
+    else:
+        st.error("❌ ملف النموذج غير موجود. تأكد من رفعه أو توفير المسار الصحيح.")
 
 # زر لبدء الفيديو
 start_detection = st.button('🚨 ابدأ الكشف عن الحريق 🚨')
@@ -101,9 +107,11 @@ if start_detection:
                 timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
                 cv2.putText(frame, f"🕒 Detected at: {timestamp}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-                image_filename = f"fire_detected_{now.strftime('%Y%m%d_%H%M%S')}.jpg"
+                # حفظ الصورة مع اسم ملف يتضمن الطابع الزمني
+                image_filename = os.path.join('images', f"fire_detected_{now.strftime('%Y%m%d_%H%M%S')}.jpg")
                 cv2.imwrite(image_filename, frame)
 
+                # إضافة بيانات الكشف إلى الجلسة
                 st.session_state.fire_images.insert(0, {'image': image_filename, 'timestamp': timestamp})
                 st.session_state.fire_detections.insert(0, {'time': timestamp, 'image': image_filename, 'confidence': confidence})
 
