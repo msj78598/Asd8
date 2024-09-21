@@ -57,17 +57,21 @@ st.title("🔥 Fire Detection Monitoring System")
 st.markdown("<h4 style='text-align: center; color: #FF5733;'>نظام مراقبة لاكتشاف الحريق</h4>", unsafe_allow_html=True)
 
 # تحميل نموذج YOLOv5
-# تحميل نموذج YOLOv5
+import torch
+import streamlit as st
+import os
+
+# تحميل النموذج مباشرة باستخدام torch.load
 if "model" not in st.session_state:
-    # تحديث المسار للإشارة إلى ملف النموذج a.pt
-    model_path = r'a.pt'  # أو استخدم المسار الكامل إذا كان النموذج في مسار مختلف
+    model_path = r'a.pt'  # تأكد من استخدام المسار الصحيح
 
     if os.path.exists(model_path):
         st.write("✅ تم العثور على ملف النموذج!")
-        # تحميل النموذج باستخدام torch.hub
-        st.session_state.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True)
+        st.session_state.model = torch.load(model_path, map_location=torch.device('cpu'))
+        st.write("✅ تم تحميل النموذج بنجاح!")
     else:
         st.error("❌ لم يتم العثور على ملف النموذج!")
+
 
 
 
