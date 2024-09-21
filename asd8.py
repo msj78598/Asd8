@@ -58,12 +58,13 @@ st.markdown("<h4 style='text-align: center; color: #FF5733;'>نظام مراقب
 
 # تحميل نموذج YOLOv5
 if "model" not in st.session_state:
-   model_path = os.path.join('best.pt')
+    model_path = os.path.join('best.pt')
 
     if os.path.exists(model_path):
         st.session_state.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)
     else:
         st.error("❌ ملف النموذج غير موجود. تأكد من رفعه أو توفير المسار الصحيح.")
+
 
 # زر لبدء الفيديو
 start_detection = st.button('🚨 ابدأ الكشف عن الحريق 🚨')
