@@ -60,7 +60,7 @@ st.markdown("<h4 style='text-align: center; color: #FF5733;'>نظام مراقب
 # تحميل نموذج YOLOv5
 if "model" not in st.session_state:
     # المسار المخصص الذي يحتوي على ملف النموذج
-    model_path = r'C:\asd8\best (13).pt'  # تأكد من استخدام المسار الكامل مع علامات r
+    model_path = r'best (13).pt'  # تأكد من استخدام المسار الكامل مع علامات r
 
     if os.path.exists(model_path):
         st.write("✅ تم العثور على ملف النموذج!")
